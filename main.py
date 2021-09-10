@@ -7,7 +7,7 @@ import discord, json
 # Load configuration
 try:
     with open("config.json") as config_file:
-        config = config_file.read()
+        config = json.loads(config_file.read())
 except:
     example_config = {"token":"", "monfiles":"", "techfiles":"","images":""}
     with open("config.json", "w") as config_file:
@@ -16,10 +16,11 @@ except:
     print("Empty config.json file created")
     exit(1)
 
-TOKEN = ''
-monfiles = listdir('/home/pi/Desktop/bot/Tuxemon-development/mods/tuxemon/db/monster')
-techfiles = listdir('/home/pi/Desktop/bot/Tuxemon-development/mods/tuxemon/db/technique')
-images = '/home/pi/Desktop/bot/Tuxemon-development/mods/tuxemon/gfx/sprites/battle/'
+TOKEN = config["token"]
+monfiles = listdir(config["monfiles"])
+techfiles = listdir(config["techfiles"])
+images = config["images"]
+
 client = discord.Client()
 @client.event
 async def on_message(message):
@@ -32,7 +33,7 @@ async def on_message(message):
             if '.json in f':
                 f = f.replace('.json', '')
             if f in  m:
-                curfile = open(monfiles[i])
+                curfile = open(config["monfiles"] + "/" + monfiles[i])
                 data = json.load(curfile)
                 slug = data['slug']
                 category = data['category']
