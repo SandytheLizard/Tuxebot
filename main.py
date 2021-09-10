@@ -16,6 +16,13 @@ except:
     print("Empty config.json file created")
     exit(1)
 
+# Verify if keys are not empty
+for key in config:
+    if not eval(f"len(config['{key}']) > 0"):
+        print(f"Key {key} seems to be empty")
+        exit(2)
+
+# Apply configuration
 TOKEN = config["token"]
 monfiles = listdir(config["monfiles"])
 techfiles = listdir(config["techfiles"])
