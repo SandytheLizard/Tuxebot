@@ -18,7 +18,7 @@ except:
 
 # Verify if keys are not empty
 for key in config:
-    if not len(config[key]) > 0:
+    if len(config[key]) > 0:
         print(f"Key {key} seems to be empty")
         exit(2)
 
