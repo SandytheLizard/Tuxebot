@@ -4,6 +4,18 @@ from os.path import isfile, join
 
 import discord, json
 
+# Load configuration
+try:
+    with open("config.json") as config_file:
+        config = config_file.read()
+except:
+    example_config = {"token":"", "monfiles":"", "techfiles":"","images":""}
+    with open("config.json", "w") as config_file:
+        config_file.write(json.dumps(example_config, indent=4))
+
+    print("Empty config.json file created")
+    exit(1)
+
 TOKEN = ''
 monfiles = listdir('/home/pi/Desktop/bot/Tuxemon-development/mods/tuxemon/db/monster')
 techfiles = listdir('/home/pi/Desktop/bot/Tuxemon-development/mods/tuxemon/db/technique')
