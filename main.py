@@ -1,50 +1,49 @@
 # bot.py
 from os import listdir
-from os.path import isfile, join
 
-import discord, json
+import discord
+import json
 
 TOKEN = ''
-monfiles = listdir('/home/pi/Desktop/bot/Tuxemon-development/mods/tuxemon/db/monster')
-techfiles = listdir('/home/pi/Desktop/bot/Tuxemon-development/mods/tuxemon/db/technique')
+mon_files = listdir('/home/pi/Desktop/bot/Tuxemon-development/mods/tuxemon/db/monster')
+tech_files = listdir('/home/pi/Desktop/bot/Tuxemon-development/mods/tuxemon/db/technique')
 images = '/home/pi/Desktop/bot/Tuxemon-development/mods/tuxemon/gfx/sprites/battle/'
 client = discord.Client()
+
+
 @client.event
 async def on_message(message):
-    if "=" in message.content:
+    # for now we only check for monsters,
+    # but in future we can add techniques, npcs, etc.
+    if message.content.startswith("/monster"):
         m = message.content
         if '.json' in m:
             m = m.replace('.json', '')
-        for i in range(len(monfiles)):
-            f =  str(monfiles[i])
+        for i in range(len(mon_files)):
+            f = str(mon_files[i])
             if '.json in f':
                 f = f.replace('.json', '')
-            if f in  m:
-                curfile = open(monfiles[i])
+            if f in m:
+                curfile = open(mon_files[i])
                 data = json.load(curfile)
                 slug = data['slug']
                 category = data['category']
-                moveset = data['moveset']
+                move_set = data['moveset']
                 weight = data['weight']
-                catchrate = data['catch_rate']
+                catch_rate = data['catch_rate']
                 types = data['types']
-                text = str(slug + ', the ' + category +' Tuxemon')
-                await message.channel.send(text)
-                text = str("Types:" + str(types))
-                await message.channel.send(text)
-                text = str("Weight: " + str(weight))
-                await message.channel.send(text)
-                text = str("Catch Rate: "+ str(catchrate) + '%')
-                await message.channel.send(text)
-                imagefrontstr = images + slug + '-front.png'
-                imagebackstr = images + slug + '-back.png'
-                imagefront = discord.File(imagefrontstr)
-                imageback = discord.File(imagebackstr)
-                await message.channel.send(file=imagefront)
-                await message.channel.send(file=imageback)
-                text = str('Learnable Moves: ')
-                await message.channel.send(text)
-                for j in range(len(moveset)):
-                    text = str(moveset[j])
-                    await message.channel.send(text)
+                text = str(slug + ', the ' + category + ' Tuxemon\n')\
+                    .join(str("Types:" + str(types)))\
+                    .join(str("Weight: " + str(weight)))\
+                    .join(str("Catch Rate: " + str(catch_rate) + '%'))\
+                    .join(str('Learnable Moves: '))
+                for j in range(len(move_set)):
+                    text.join(str(move_set[j]))
+
+                imagefront = discord.File(images + slug + '-front.png')
+                imageback = discord.File(images + slug + '-back.png')
+
+                await message.channel.send(content=text, files=[imagefront, imageback])
+
+
 client.run(TOKEN)
