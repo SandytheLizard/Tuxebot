@@ -4,10 +4,30 @@ from os import listdir
 import discord
 import json
 
-TOKEN = ''
-mon_files = listdir('/home/pi/Desktop/bot/Tuxemon-development/mods/tuxemon/db/monster')
-tech_files = listdir('/home/pi/Desktop/bot/Tuxemon-development/mods/tuxemon/db/technique')
-images = '/home/pi/Desktop/bot/Tuxemon-development/mods/tuxemon/gfx/sprites/battle/'
+# Load configuration
+try:
+    with open("config.json") as config_file:
+        config = json.loads(config_file.read())
+except:
+    example_config = {"token":"", "monfiles":"", "techfiles":"","images":""}
+    with open("config.json", "w") as config_file:
+        config_file.write(json.dumps(example_config, indent=4))
+
+    print("Empty config.json file created")
+    exit(1)
+
+# Verify if keys are not empty
+for key in config:
+    if not eval(f"len(config['{key}']) > 0"):
+        print(f"Key {key} seems to be empty")
+        exit(2)
+
+# Apply configuration
+TOKEN = config["token"]
+mon_files = listdir(config["monfiles"])
+tech_files = listdir(config["techfiles"])
+images = config["images"]
+
 client = discord.Client()
 
 
