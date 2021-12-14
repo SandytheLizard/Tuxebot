@@ -1,0 +1,12 @@
+{{ name.title() }} the {{ .replace("_", " ").title() }} Tuxemon
+Types: {{ types | sort | join(", ") | title }}
+Weight: {{ weight }}
+Catch Rate: {{ catch_rate | int }}%
+Learnable Moves:
+```
+Name           Level Learned
+============================
+{% for move in moveset %}
+{{- "%-15s%s" | format(move["technique"].replace("_", " ").title(), move["level_learned"]) }}
+{% endfor %}
+```

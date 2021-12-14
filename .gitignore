@@ -1,0 +1,79 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# C extensions
+*.so
+
+# Distribution / packaging
+venv/
+bin/
+build/
+develop-eggs/
+dist/
+eggs/
+parts/
+sdist/
+var/
+*.bak
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+# Rope
+.ropeproject
+
+# Sphinx documentation
+docs/_build/
+docs/autogen/
+
+# Logs
+*.log
+
+# Gedit files
+*~
+
+# Save games
+tuxemon/saves/
+
+# Windows file
+Thumbs.db
+
+# PyCharm
+*.iml
+.idea/*
+
+# Eric6
+*.epj
+/__init__.py
+.eric6project
+
+# KDevelop
+.*.kate-swp
+*.kdev4
+/.kdev4
+
+# Mac OS
+*.DS_Store
+mods/tuxemon/maps/~$Map Helper.xlsx
+mods/tuxemon/db/encounter/~$JSON-o-matic for Encounters.ods
+/.mypy_cache/
