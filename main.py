@@ -1,13 +1,31 @@
-# bot.py
-from os import listdir
-
+from jinja2 import Template
+import os
 import discord
 import json
 
-TOKEN = ''
-mon_files = listdir('/home/pi/Desktop/bot/Tuxemon-development/mods/tuxemon/db/monster')
-tech_files = listdir('/home/pi/Desktop/bot/Tuxemon-development/mods/tuxemon/db/technique')
-images = '/home/pi/Desktop/bot/Tuxemon-development/mods/tuxemon/gfx/sprites/battle/'
+
+def load_json(root, folder):
+    values = dict()
+    db_path = os.path.join(root, folder)
+    paths = [os.path.join(db_path, fn) for fn in os.listdir(db_path)]
+    for path in paths:
+        with open(path) as fp:
+            data = json.load(fp)
+        slug = data["slug"]
+        assert slug not in values
+        values[slug] = data
+    return values
+
+# config
+token = ""
+data_root = "/home/ltheden/Tuxemon-development/"
+monster_template = "monster_template.json"
+monster_command = "=monster"
+
+# global objects
+monsters = load_json(data_root, "mods/tuxemon/db/monster")
+techniques = load_json(data_root, "mods/tuxemon/db/technique")
+images = data_root + "mods/tuxemon/gfx/sprites/battle/"
 client = discord.Client()
 
 
@@ -15,35 +33,34 @@ client = discord.Client()
 async def on_message(message):
     # for now we only check for monsters,
     # but in future we can add techniques, npcs, etc.
-    if message.content.startswith("/monster"):
-        m = message.content
-        if '.json' in m:
-            m = m.replace('.json', '')
-        for i in range(len(mon_files)):
-            f = str(mon_files[i])
-            if '.json in f':
-                f = f.replace('.json', '')
-            if f in m:
-                curfile = open(mon_files[i])
-                data = json.load(curfile)
-                slug = data['slug']
-                category = data['category']
-                move_set = data['moveset']
-                weight = data['weight']
-                catch_rate = data['catch_rate']
-                types = data['types']
-                text = str(slug + ', the ' + category + ' Tuxemon\n')\
-                    .join(str("Types:" + str(types)))\
-                    .join(str("Weight: " + str(weight)))\
-                    .join(str("Catch Rate: " + str(catch_rate) + '%'))\
-                    .join(str('Learnable Moves: '))
-                for j in range(len(move_set)):
-                    text.join(str(move_set[j]))
-
-                imagefront = discord.File(images + slug + '-front.png')
-                imageback = discord.File(images + slug + '-back.png')
-
-                await message.channel.send(content=text, files=[imagefront, imageback])
+    if message.content.startswith(monster_command):
+        m = message.content.strip()
+        try:
+            command, slug = m.split()
+        except:
+            pass
+        else:
+            if slug in monsters:
+                # open template each time so it can be edited live
+                with open(monster_template) as fp:
+                    message_template = Template(fp.read())
+                data = monsters[slug]
+                content = message_template.render(
+                    name=slug,
+                    slug=slug,
+                    category=data["category"],
+                    moveset=data["moveset"],
+                    weight=data["weight"],
+                    catch_rate=data["catch_rate"],
+                    types=data["types"],
+                )
+                imagefront = discord.File(images + slug + "-front.png")
+                imageback = discord.File(images + slug + "-back.png")
+                await message.channel.send(
+                    content=content,
+                    files=[imagefront, imageback],
+                )
 
 
-client.run(TOKEN)
+if __name__ == "__main__":
+    client.run(token)
